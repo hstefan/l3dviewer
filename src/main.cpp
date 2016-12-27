@@ -43,8 +43,11 @@ int main() {
 		glClearColor(1.f, 0.f, 0.f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glfwPollEvents();
 		glfwSwapBuffers(window);
+		glfwPollEvents();
+
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+			glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 
 	return 0;
