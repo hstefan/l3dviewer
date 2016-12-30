@@ -22,4 +22,9 @@ add_subdirectory(external/glfw)
 add_executable(l3dviewer
   src/main.cpp)
 
+add_custom_command(
+  TARGET l3dviewer PRE_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+	${CMAKE_SOURCE_DIR}/files $<TARGET_FILE_DIR:l3dviewer>/files)
+
 target_link_libraries(l3dviewer glad glfw)

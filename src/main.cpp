@@ -3,6 +3,9 @@
 #include <GLFW/glfw3.h>
 #include <array>
 #include <chrono>
+#include <string>
+#include <streambuf>
+#include <fstream>
 
 static bool compileShader(GLuint shader) {
   GLint status;
@@ -21,6 +24,18 @@ static void checkGLError() {
   GLuint error = glGetError();
   if (error != 0)
 	printf("glGetError returned %d!\n", error);
+}
+
+// extracted from https://insanecoding.blogspot.com.br/2011/11/how-to-read-in-file-in-c.html
+std::string getFileContents(const char* filepath) {
+  std::ifstream file(filepath, std::ios::in | std::ios::binary);
+  if (file) {
+	return std::string {
+	  std::istreambuf_iterator<char>(file),
+	  std::istreambuf_iterator<char>()
+	};
+  }
+  return "";
 }
 
 int main() {
@@ -77,32 +92,19 @@ int main() {
   glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices), vertices.data(), GL_STATIC_DRAW);
   checkGLError();
 
-  // creates the vertex shader from a hardcoded string
-  const GLchar* vertexSource =
-	"#version 150\n"
-	"uniform float timeSinceStart;"
-	"in vec2 position;"
-	"out float t;"
-	"void main() {"
-	"	t = (sin(timeSinceStart * 4.0) + 1.0) * 0.5;"
-	"	gl_Position = vec4(position, 0.0, 1.0);"
-	"}";
+  // creates the vertex shader
+  const std::string vertexSource = getFileContents("files/vertex.glsl");
+  const GLchar* vertexSrc = vertexSource.c_str();
   GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertexShader, 1, &vertexSource, nullptr);
+  glShaderSource(vertexShader, 1, &vertexSrc, nullptr);
   compileShader(vertexShader);
   checkGLError();
 
-  // creates the fragment shader from a hardcoded string
-  const GLchar* fragSource =
-	"#version 150\n"
-	"uniform vec3 triangleColor;"
-	"in float t;"
-	"out vec4 outColor;"
-	"void main() {"
-	"	outColor = vec4(t * triangleColor, 1.0);"
-	"}";
+  // creates the fragment shader
+  const std::string fragSource = getFileContents("files/frag.glsl");
+  const GLchar* fragSrc = fragSource.c_str();
   GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragShader, 1, &fragSource, nullptr);
+  glShaderSource(fragShader, 1, &fragSrc, nullptr);
   compileShader(fragShader);
   checkGLError();
 
