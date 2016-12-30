@@ -80,8 +80,11 @@ int main() {
   // creates the vertex shader from a hardcoded string
   const GLchar* vertexSource =
 	"#version 150\n"
+	"uniform float timeSinceStart;"
 	"in vec2 position;"
+	"out float t;"
 	"void main() {"
+	"	t = (sin(timeSinceStart * 4.0) + 1.0) * 0.5;"
 	"	gl_Position = vec4(position, 0.0, 1.0);"
 	"}";
   GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -93,10 +96,9 @@ int main() {
   const GLchar* fragSource =
 	"#version 150\n"
 	"uniform vec3 triangleColor;"
-	"uniform float timeSinceStart;"
+	"in float t;"
 	"out vec4 outColor;"
 	"void main() {"
-	"	float t = (sin(timeSinceStart * 4.0) + 1.0) * 0.5;"
 	"	outColor = vec4(t * triangleColor, 1.0);"
 	"}";
   GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
