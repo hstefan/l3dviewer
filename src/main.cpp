@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <array>
+#include <chrono>
 
 static bool compileShader(GLuint shader) {
   GLint status;
@@ -92,9 +93,11 @@ int main() {
   const GLchar* fragSource =
 	"#version 150\n"
 	"uniform vec3 triangleColor;"
+	"uniform float timeSinceStart;"
 	"out vec4 outColor;"
 	"void main() {"
-	"	outColor = vec4(triangleColor, 1.0);"
+	"	float t = (sin(timeSinceStart * 4.0) + 1.0) * 0.5;"
+	"	outColor = vec4(t * triangleColor, 1.0);"
 	"}";
   GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
   glShaderSource(fragShader, 1, &fragSource, nullptr);
@@ -126,14 +129,29 @@ int main() {
 
   // sets color uniform
   GLint uniColor = glGetUniformLocation(shaderProgram, "triangleColor");
-  glUniform3f(uniColor, 1.f, 0.f, 0.f);
+  glUniform3f(uniColor, 1.f, 1.f, 0.f);
   checkGLError();
+
+  // finds time uniform
+  GLint timeSinceStart = glGetUniformLocation(shaderProgram, "timeSinceStart");
+  glUniform1f(timeSinceStart, 0.f);
+  checkGLError();
+
+  using std::chrono::high_resolution_clock;
+  using std::chrono::duration_cast;
+  using std::chrono::duration;
+  const auto start = high_resolution_clock::now();
 
   // runs application loop
   while (!glfwWindowShouldClose(window)) {
 	// sets OpenGL clear color
 	glClearColor(0.f, 0.f, 0.f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT);
+
+	// updates time uniform attribute
+	const auto timeDelta = high_resolution_clock::now() - start;
+	const float time = duration_cast<duration<float>>(timeDelta).count();
+	glUniform1f(timeSinceStart, time);
 
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 	checkGLError();
