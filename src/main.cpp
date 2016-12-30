@@ -139,5 +139,16 @@ int main() {
 	  glfwSetWindowShouldClose(window, GL_TRUE);
   }
 
+  // cleans up shaders
+  glDeleteProgram(shaderProgram);
+  glDeleteShader(fragShader);
+  glDeleteShader(vertexShader);
+
+  // clean up vbo
+  glDeleteBuffers(1, &vbo);
+
+  // clean up vao
+  glDeleteVertexArrays(1, &vao);
+
   return 0;
 }
