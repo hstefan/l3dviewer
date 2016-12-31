@@ -19,6 +19,17 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(external/glfw)
 
+# Setup STB dependencies
+set(STB_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/stb/include")
+set(STB_SOURCES "${CMAKE_SOURCE_DIR}/external/stb/src/stb_image.cpp")
+
+add_library(stb STATIC
+  ${STB_SOURCES})
+
+target_include_directories(stb
+  PUBLIC ${STB_INCLUDE_DIRS})
+
+# l3dviewer target
 add_executable(l3dviewer
   src/main.cpp)
 
@@ -29,4 +40,4 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E copy_directory
 	${CMAKE_SOURCE_DIR}/files $<TARGET_FILE_DIR:l3dviewer>/files)
 
-target_link_libraries(l3dviewer glad glfw)
+target_link_libraries(l3dviewer glad glfw stb)
