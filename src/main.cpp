@@ -81,10 +81,10 @@ int main() {
   checkGLError();
 
   // uploads vertex data to GPU buffers (VBOs)
-  std::array<float, 6> vertices = {
-	  0.0f, 0.5f,
-	  0.5f, -0.5f,
-	  -0.5f, -0.5f
+  std::array<float, 15> vertices = {
+	  0.0f,   0.5f, 1.0f, 0.0f, 0.0f,
+	  0.5f,  -0.5f, 0.0f, 1.0f, 0.0f,
+	  -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
   };
   GLuint vbo;
   glGenBuffers(1, &vbo);
@@ -128,12 +128,15 @@ int main() {
   // sets up position attribute for the shader program
   GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
   glEnableVertexAttribArray(posAttrib);
-  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE,
+						5 * sizeof(GL_FLOAT), 0);
   checkGLError();
 
   // sets color uniform
-  GLint uniColor = glGetUniformLocation(shaderProgram, "triangleColor");
-  glUniform3f(uniColor, 1.f, 1.f, 0.f);
+  GLint color = glGetAttribLocation(shaderProgram, "color");
+  glEnableVertexAttribArray(color);
+  glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE,
+						5 * sizeof(GL_FLOAT), (void*)(2 * sizeof(GL_FLOAT)));
   checkGLError();
 
   // finds time uniform
