@@ -11,5 +11,5 @@ out vec3 fragColor;
 void main() {
   t = (sin(timeSinceStart * 4.0) + 1.0) * 0.5;
 	fragColor = color;
-  gl_Position = vec4(position, 0.0, 1.0);
+  gl_Position = vec4(position.x, position.y, 0.0, 1.0);
 };
