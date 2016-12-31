@@ -22,6 +22,8 @@ add_subdirectory(external/glfw)
 add_executable(l3dviewer
   src/main.cpp)
 
+set_property(TARGET l3dviewer PROPERTY CXX_STANDARD 14)
+
 add_custom_command(
   TARGET l3dviewer PRE_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_directory
