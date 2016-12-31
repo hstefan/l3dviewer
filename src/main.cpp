@@ -1,11 +1,11 @@
-﻿#include <cstdio>
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 #include <array>
 #include <chrono>
-#include <string>
-#include <streambuf>
+#include <cstdio>
 #include <fstream>
+#include <streambuf>
+#include <string>
 
 static bool compileShader(GLuint shader) {
   GLint status;
@@ -13,27 +13,25 @@ static bool compileShader(GLuint shader) {
   glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
   // if status == GL_FALSE, the compile failed
   if (status != GL_TRUE) {
-	std::array<char, 512> buffer;
-	glGetShaderInfoLog(shader, buffer.size(), nullptr, buffer.data());
-	printf("Error compiling shader.\n%s", buffer.data());
+    std::array<char, 512> buffer;
+    glGetShaderInfoLog(shader, buffer.size(), nullptr, buffer.data());
+    printf("Error compiling shader.\n%s", buffer.data());
   }
   return status == GL_TRUE;
 }
 
 static void checkGLError() {
   GLuint error = glGetError();
-  if (error != 0)
-	printf("glGetError returned %d!\n", error);
+  if (error != 0) printf("glGetError returned %d!\n", error);
 }
 
-// extracted from https://insanecoding.blogspot.com.br/2011/11/how-to-read-in-file-in-c.html
+// extracted from
+// https://insanecoding.blogspot.com.br/2011/11/how-to-read-in-file-in-c.html
 std::string getFileContents(const char* filepath) {
   std::ifstream file(filepath, std::ios::in | std::ios::binary);
   if (file) {
-	return std::string {
-	  std::istreambuf_iterator<char>(file),
-	  std::istreambuf_iterator<char>()
-	};
+    return std::string{std::istreambuf_iterator<char>(file),
+                       std::istreambuf_iterator<char>()};
   }
   return "";
 }
@@ -42,8 +40,8 @@ int main() {
   // initializes glfw
   int glfwInitRc = glfwInit();
   if (!glfwInitRc) {
-	fprintf(stderr, "Failed to init GLFW.");
-	return -1;
+    fprintf(stderr, "Failed to init GLFW.");
+    return -1;
   }
 
   // sets up OpenGL-specific window hints
@@ -55,9 +53,9 @@ int main() {
   // create glfw window
   GLFWwindow* window = glfwCreateWindow(640, 480, "L3Viewer", nullptr, nullptr);
   if (!window) {
-	fprintf(stderr, "Failed to create window.");
-	glfwTerminate();
-	return -1;
+    fprintf(stderr, "Failed to create window.");
+    glfwTerminate();
+    return -1;
   }
 
   // sets up window as our OpenGL context
@@ -66,9 +64,9 @@ int main() {
   // configures glad to load using glfw utility
   int gladLoadRc = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
   if (!gladLoadRc) {
-	fprintf(stderr, "Failed to load OpenGL with glad: error code %d\n",
-	  gladLoadRc);
-	return -1;
+    fprintf(stderr, "Failed to load OpenGL with glad: error code %d\n",
+            gladLoadRc);
+    return -1;
   }
 
   printf("OpenGL version: %d.%d\n", GLVersion.major, GLVersion.minor);
@@ -82,16 +80,14 @@ int main() {
 
   // uploads vertex data to GPU buffers (VBOs)
   std::array<GLfloat, 20> vertices = {
-	  -0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
-	   0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
-	   0.5f,  -0.5f, 0.0f, 0.0f, 1.0f,
-	  -0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
+      -0.5f, 0.5f,  1.0f, 0.0f, 0.0f, 0.5f,  0.5f,  0.0f, 1.0f, 0.0f,
+      0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
   };
   GLuint vbo;
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat),
-			  vertices.data(), GL_STATIC_DRAW);
+               vertices.data(), GL_STATIC_DRAW);
   checkGLError();
 
   // creates the vertex shader
@@ -119,9 +115,9 @@ int main() {
   GLint programStatus;
   glGetProgramiv(shaderProgram, GL_LINK_STATUS, &programStatus);
   if (programStatus != GL_TRUE) {
-	std::array<char, 512> buffer;
-	glGetProgramInfoLog(shaderProgram, buffer.size(), nullptr, buffer.data());
-	printf("Failed to link shader program.\n%s", buffer.data());
+    std::array<char, 512> buffer;
+    glGetProgramInfoLog(shaderProgram, buffer.size(), nullptr, buffer.data());
+    printf("Failed to link shader program.\n%s", buffer.data());
   }
 
   glUseProgram(shaderProgram);
@@ -130,15 +126,15 @@ int main() {
   // sets up position attribute for the shader program
   GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
   glEnableVertexAttribArray(posAttrib);
-  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE,
-						5 * sizeof(GLfloat), 0);
+  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat),
+                        0);
   checkGLError();
 
   // sets color uniform
   GLint color = glGetAttribLocation(shaderProgram, "color");
   glEnableVertexAttribArray(color);
-  glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE,
-						5 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+  glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat),
+                        (void*)(2 * sizeof(GLfloat)));
   checkGLError();
 
   // finds time uniform
@@ -147,12 +143,12 @@ int main() {
   checkGLError();
 
   // create ebo
-  std::array<GLuint, 6> indices = { 0, 1, 2, 2, 3, 0 };
+  std::array<GLuint, 6> indices = {0, 1, 2, 2, 3, 0};
   GLuint ebo;
   glGenBuffers(1, &ebo);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint),
-			  indices.data(), GL_STATIC_DRAW);
+               indices.data(), GL_STATIC_DRAW);
 
   using std::chrono::high_resolution_clock;
   using std::chrono::duration_cast;
@@ -161,23 +157,23 @@ int main() {
 
   // runs application loop
   while (!glfwWindowShouldClose(window)) {
-	// sets OpenGL clear color
-	glClearColor(0.f, 0.f, 0.f, 1.f);
-	glClear(GL_COLOR_BUFFER_BIT);
+    // sets OpenGL clear color
+    glClearColor(0.f, 0.f, 0.f, 1.f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
-	// updates time uniform attribute
-	const auto timeDelta = high_resolution_clock::now() - start;
-	const float time = duration_cast<duration<float>>(timeDelta).count();
-	glUniform1f(timeSinceStart, time);
+    // updates time uniform attribute
+    const auto timeDelta = high_resolution_clock::now() - start;
+    const float time = duration_cast<duration<float>>(timeDelta).count();
+    glUniform1f(timeSinceStart, time);
 
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-	checkGLError();
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    checkGLError();
 
-	glfwSwapBuffers(window);
-	glfwPollEvents();
+    glfwSwapBuffers(window);
+    glfwPollEvents();
 
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-	  glfwSetWindowShouldClose(window, GL_TRUE);
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+      glfwSetWindowShouldClose(window, GL_TRUE);
   }
 
   // cleans up shaders
