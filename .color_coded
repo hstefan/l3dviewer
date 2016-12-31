@@ -1,0 +1,6 @@
+-x
+c++
+-I/home/hstefan/workspace/personal/l3dviewer/external/glad/include
+-I/home/hstefan/workspace/personal/l3dviewer/external/glfw/include
+-I/home/hstefan/workspace/personal/l3dviewer/external/stb/include
+-std=gnu++14
