@@ -81,15 +81,17 @@ int main() {
   checkGLError();
 
   // uploads vertex data to GPU buffers (VBOs)
-  std::array<float, 15> vertices = {
-	  0.0f,   0.5f, 1.0f, 0.0f, 0.0f,
-	  0.5f,  -0.5f, 0.0f, 1.0f, 0.0f,
-	  -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+  std::array<GLfloat, 20> vertices = {
+	  -0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
+	   0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
+	   0.5f,  -0.5f, 0.0f, 0.0f, 1.0f,
+	  -0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
   };
   GLuint vbo;
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices), vertices.data(), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat),
+			  vertices.data(), GL_STATIC_DRAW);
   checkGLError();
 
   // creates the vertex shader
@@ -129,20 +131,28 @@ int main() {
   GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
   glEnableVertexAttribArray(posAttrib);
   glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE,
-						5 * sizeof(GL_FLOAT), 0);
+						5 * sizeof(GLfloat), 0);
   checkGLError();
 
   // sets color uniform
   GLint color = glGetAttribLocation(shaderProgram, "color");
   glEnableVertexAttribArray(color);
   glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE,
-						5 * sizeof(GL_FLOAT), (void*)(2 * sizeof(GL_FLOAT)));
+						5 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
   checkGLError();
 
   // finds time uniform
   GLint timeSinceStart = glGetUniformLocation(shaderProgram, "timeSinceStart");
   glUniform1f(timeSinceStart, 0.f);
   checkGLError();
+
+  // create ebo
+  std::array<GLuint, 6> indices = { 0, 1, 2, 2, 3, 0 };
+  GLuint ebo;
+  glGenBuffers(1, &ebo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint),
+			  indices.data(), GL_STATIC_DRAW);
 
   using std::chrono::high_resolution_clock;
   using std::chrono::duration_cast;
@@ -160,7 +170,7 @@ int main() {
 	const float time = duration_cast<duration<float>>(timeDelta).count();
 	glUniform1f(timeSinceStart, time);
 
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	checkGLError();
 
 	glfwSwapBuffers(window);
