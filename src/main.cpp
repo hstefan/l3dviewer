@@ -37,6 +37,29 @@ std::string getFileContents(const char* filepath) {
   return "";
 }
 
+GLuint createTextureFromFile(GLenum texture, const char* filename) {
+  GLuint tex;
+  glGenTextures(1, &tex);
+  glActiveTexture(texture);
+  glBindTexture(GL_TEXTURE_2D, tex);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  int w;
+  int h;
+  int c;
+  unsigned char* texBytes = stbi_load(filename, &w, &h, &c, STBI_rgb);
+
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE,
+               texBytes);
+  glGenerateMipmap(GL_TEXTURE_2D);
+  checkGLError();
+  stbi_image_free(texBytes);
+  return tex;
+}
+
 int main() {
   // initializes glfw
   int glfwInitRc = glfwInit();
@@ -160,26 +183,11 @@ int main() {
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint),
                indices.data(), GL_STATIC_DRAW);
 
-  GLuint tex;
-  glGenTextures(1, &tex);
-  glBindTexture(GL_TEXTURE_2D, tex);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  GLuint helloTex = createTextureFromFile(GL_TEXTURE0, "files/hello.png");
+  GLuint baconTex = createTextureFromFile(GL_TEXTURE1, "files/bacon.png");
 
-  int w;
-  int h;
-  int c;
-  unsigned char* helloTex = stbi_load("files/hello.png", &w, &h, &c, STBI_rgb);
-
-  if (helloTex == nullptr) printf("Failed to load hello.png.");
-
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE,
-               helloTex);
-  glGenerateMipmap(GL_TEXTURE_2D);
-  checkGLError();
-  stbi_image_free(helloTex);
+  glUniform1i(glGetUniformLocation(shaderProgram, "texPepper"), 0);
+  glUniform1i(glGetUniformLocation(shaderProgram, "texBacon"), 1);
 
   using std::chrono::high_resolution_clock;
   using std::chrono::duration_cast;
