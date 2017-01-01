@@ -6,6 +6,7 @@
 #include <fstream>
 #include <streambuf>
 #include <string>
+#include <stb/stb_image.h>
 
 static bool compileShader(GLuint shader) {
   GLint status;
@@ -79,9 +80,11 @@ int main() {
   checkGLError();
 
   // uploads vertex data to GPU buffers (VBOs)
-  std::array<GLfloat, 20> vertices = {
-      -0.5f, 0.5f,  1.0f, 0.0f, 0.0f, 0.5f,  0.5f,  0.0f, 1.0f, 0.0f,
-      0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
+  std::array<GLfloat, 28> vertices = {
+      -0.5f, 0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+      0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+      0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+      -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f
   };
   GLuint vbo;
   glGenBuffers(1, &vbo);
@@ -126,15 +129,22 @@ int main() {
   // sets up position attribute for the shader program
   GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
   glEnableVertexAttribArray(posAttrib);
-  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat),
+  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat),
                         0);
   checkGLError();
 
   // sets color uniform
   GLint color = glGetAttribLocation(shaderProgram, "color");
   glEnableVertexAttribArray(color);
-  glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat),
+  glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat),
                         (void*)(2 * sizeof(GLfloat)));
+  checkGLError();
+
+  // sets color uniform
+  GLint texCoord = glGetAttribLocation(shaderProgram, "texCoord");
+  glEnableVertexAttribArray(texCoord);
+  glVertexAttribPointer(texCoord, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat),
+                        (void*)(5 * sizeof(GLfloat)));
   checkGLError();
 
   // finds time uniform
@@ -149,6 +159,27 @@ int main() {
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint),
                indices.data(), GL_STATIC_DRAW);
+
+  GLuint tex;
+  glGenTextures(1, &tex);
+  glBindTexture(GL_TEXTURE_2D, tex);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  int w;
+  int h;
+  int c;
+  unsigned char* helloTex = stbi_load("files/hello.png", &w, &h, &c, STBI_rgb);
+
+  if (helloTex == nullptr) printf("Failed to load hello.png.");
+
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE,
+               helloTex);
+  glGenerateMipmap(GL_TEXTURE_2D);
+  checkGLError();
+  stbi_image_free(helloTex);
 
   using std::chrono::high_resolution_clock;
   using std::chrono::duration_cast;
