@@ -75,7 +75,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
   // create glfw window
-  GLFWwindow* window = glfwCreateWindow(640, 480, "L3Viewer", nullptr, nullptr);
+  GLFWwindow* window = glfwCreateWindow(1280, 720, "L3Viewer", nullptr, nullptr);
   if (!window) {
     fprintf(stderr, "Failed to create window.");
     glfwTerminate();
