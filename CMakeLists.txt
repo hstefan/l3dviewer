@@ -38,6 +38,12 @@ set_property(TARGET l3dviewer PROPERTY CXX_STANDARD 14)
 add_custom_command(
   TARGET l3dviewer PRE_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_directory
-	${CMAKE_SOURCE_DIR}/files $<TARGET_FILE_DIR:l3dviewer>/files)
+  ${CMAKE_SOURCE_DIR}/files $<TARGET_FILE_DIR:l3dviewer>/files)
+
+add_custom_target(run
+  COMMAND l3dviewer
+  DEPENDS l3dviewer
+  WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
+)
 
 target_link_libraries(l3dviewer glad glfw stb)
