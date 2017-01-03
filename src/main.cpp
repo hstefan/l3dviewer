@@ -193,7 +193,19 @@ int main() {
   glUniform1i(glGetUniformLocation(shaderProgram, "texPepper"), 0);
   glUniform1i(glGetUniformLocation(shaderProgram, "texBacon"), 1);
 
-  GLint trans = glGetUniformLocation(shaderProgram, "trans");
+  GLint model = glGetUniformLocation(shaderProgram, "model");
+
+  GLint view = glGetUniformLocation(shaderProgram, "view");
+  glm::mat4 viewMat = glm::lookAt(
+      glm::vec3(1.2f, 1.2f, 1.2f),
+      glm::vec3(0.0f, 0.0f, 0.0f),
+      glm::vec3(0.0f, 0.0f, 1.0f));
+  glUniformMatrix4fv(view, 1, GL_FALSE, glm::value_ptr(viewMat));
+
+  GLint proj = glGetUniformLocation(shaderProgram, "proj");
+  glm::mat4 projMat =
+      glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 1.0f, 10.f);
+  glUniformMatrix4fv(proj, 1, GL_FALSE, glm::value_ptr(projMat));
 
   using std::chrono::high_resolution_clock;
   using std::chrono::duration_cast;
@@ -213,10 +225,9 @@ int main() {
 
     // sets up transformation matix
     glm::mat4 transMat;
-    transMat = glm::rotate(transMat,
-        time * glm::radians(45.0f),
-        glm::vec3(1.0f, 1.0f, 0.5f));
-    glUniformMatrix4fv(trans, 1, GL_FALSE, glm::value_ptr(transMat));
+    transMat = glm::rotate(transMat, time * glm::radians(45.0f),
+                           glm::vec3(0.0f, 0.0f, 1.0f));
+    glUniformMatrix4fv(model, 1, GL_FALSE, glm::value_ptr(transMat));
 
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     checkGLError();
