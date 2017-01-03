@@ -7,6 +7,10 @@
 #include <streambuf>
 #include <string>
 #include <stb/stb_image.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/vec3.hpp>
 
 static bool compileShader(GLuint shader) {
   GLint status;
@@ -189,6 +193,8 @@ int main() {
   glUniform1i(glGetUniformLocation(shaderProgram, "texPepper"), 0);
   glUniform1i(glGetUniformLocation(shaderProgram, "texBacon"), 1);
 
+  GLint trans = glGetUniformLocation(shaderProgram, "trans");
+
   using std::chrono::high_resolution_clock;
   using std::chrono::duration_cast;
   using std::chrono::duration;
@@ -204,6 +210,13 @@ int main() {
     const auto timeDelta = high_resolution_clock::now() - start;
     const float time = duration_cast<duration<float>>(timeDelta).count();
     glUniform1f(timeSinceStart, time);
+
+    // sets up transformation matix
+    glm::mat4 transMat;
+    transMat = glm::rotate(transMat,
+        time * glm::radians(45.0f),
+        glm::vec3(1.0f, 1.0f, 0.5f));
+    glUniformMatrix4fv(trans, 1, GL_FALSE, glm::value_ptr(transMat));
 
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     checkGLError();
