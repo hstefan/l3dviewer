@@ -29,6 +29,9 @@ add_library(stb STATIC
 target_include_directories(stb
   PUBLIC ${STB_INCLUDE_DIRS})
 
+# Setup GLM dependency
+add_subdirectory(external/glm)
+
 # l3dviewer target
 add_executable(l3dviewer
   src/main.cpp)
@@ -46,4 +49,4 @@ add_custom_target(run
   WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
 )
 
-target_link_libraries(l3dviewer glad glfw stb)
+target_link_libraries(l3dviewer glad glfw stb glm)

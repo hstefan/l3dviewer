@@ -39,6 +39,7 @@ flags = [
     '-I/home/hstefan/workspace/personal/l3dviewer/external/glad/include',
     '-I/home/hstefan/workspace/personal/l3dviewer/external/glfw/include',
     '-I/home/hstefan/workspace/personal/l3dviewer/external/stb/include',
+    '-I/home/hstefan/workspace/personal/l3dviewer/external/glm',
     '-std=gnu++14',
 ]
 
