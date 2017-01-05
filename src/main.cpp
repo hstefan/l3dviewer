@@ -212,6 +212,16 @@ int main() {
   using std::chrono::duration;
   const auto start = high_resolution_clock::now();
 
+  // variables necessary for rotating object when we press space
+  const float xMaxAngSpeed = 180.0f;
+  const float xAngAccel = 45.0f;
+  float xAngSpeed = 0.0f;
+  float xAng = 0.0f;
+
+  // time from previous frame
+  auto lastFrameTime = high_resolution_clock::now();
+  float deltaTime = 0.0f;
+
   // runs application loop
   while (!glfwWindowShouldClose(window)) {
     // sets OpenGL clear color
@@ -219,16 +229,31 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     // updates time uniform attribute
-    const auto timeDelta = high_resolution_clock::now() - start;
-    const float time = duration_cast<duration<float>>(timeDelta).count();
+    const auto totalTime = high_resolution_clock::now() - start;
+    const float time = duration_cast<duration<float>>(totalTime).count();
     glUniform1f(timeSinceStart, time);
 
+    // updates deltaTime
+    const auto frameDuration = high_resolution_clock::now() - lastFrameTime;
+    deltaTime = duration_cast<duration<float>>(frameDuration).count();
+    lastFrameTime = high_resolution_clock::now();
+
     // sets up transformation matix
+    glm::mat4 transMat;
+
+    // animates the x and y scale of the object
     const float scale = (glm::sin(time * glm::radians(180.0f)) + 4.0f) / 3.0f;
-    glm::mat4 transMat(
-        glm::scale(glm::mat4(), glm::vec3(scale, scale, 1.0f)));
+    transMat = glm::scale(glm::mat4(), glm::vec3(scale, scale, 1.0f));
+
+    // constantly rotates the object on the Z axis
     transMat = glm::rotate(transMat, time * glm::radians(45.0f),
                            glm::vec3(0.0f, 0.0f, 1.0f));
+
+    // smoothly rotates the object on the X axis based on user's input
+    transMat = glm::rotate(transMat, glm::radians(xAng),
+        glm::vec3(1.0f, 0.0f, 0.0f));
+
+    // uploads model matrix to our uniform attribute
     glUniformMatrix4fv(model, 1, GL_FALSE, glm::value_ptr(transMat));
 
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
@@ -236,6 +261,15 @@ int main() {
 
     glfwSwapBuffers(window);
     glfwPollEvents();
+
+    // controls angular speed for the object x rotation
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+      xAngSpeed += xAngAccel * deltaTime;
+    else
+      xAngSpeed -= xAngAccel * deltaTime;
+
+    xAngSpeed = glm::clamp(xAngSpeed, 0.0f, xMaxAngSpeed);
+    xAng += xAngSpeed * deltaTime;
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       glfwSetWindowShouldClose(window, GL_TRUE);
