@@ -224,7 +224,9 @@ int main() {
     glUniform1f(timeSinceStart, time);
 
     // sets up transformation matix
-    glm::mat4 transMat;
+    const float scale = (glm::sin(time * glm::radians(180.0f)) + 4.0f) / 3.0f;
+    glm::mat4 transMat(
+        glm::scale(glm::mat4(), glm::vec3(scale, scale, 1.0f)));
     transMat = glm::rotate(transMat, time * glm::radians(45.0f),
                            glm::vec3(0.0f, 0.0f, 1.0f));
     glUniformMatrix4fv(model, 1, GL_FALSE, glm::value_ptr(transMat));
