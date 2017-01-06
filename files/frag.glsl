@@ -14,10 +14,7 @@ void main() {
 
   // recalculate coords to generate a mirrored wavy tex in the bottom half
   vec2 coord = TexCoord;
-  if (coord.y > 0.5) {
-    coord.y = 0.5 - (coord.y - 0.5);
-    coord.x = coord.x + (sin(coord.y * 60 + timeSinceStart * 2.0) / 30.0);
-  }
+  coord.x = coord.x + (sin(coord.y * 60 + timeSinceStart * 10.0) / 90.0);
 
   // sample color from both textures
   vec4 colorPepper = texture(texPepper, coord);
