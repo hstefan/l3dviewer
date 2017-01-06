@@ -1,6 +1,6 @@
 #version 150
 
-in vec2 position;
+in vec3 position;
 in vec3 color;
 in vec2 texCoord;
 
@@ -14,5 +14,5 @@ uniform mat4 model;
 void main() {
   FragColor = vec4(color, 1.0);
   TexCoord = texCoord;
-  gl_Position = proj * view * model * vec4(position.x, position.y, 0.0, 1.0);
+  gl_Position = proj * view * model * vec4(position.xyz, 1.0);
 };

@@ -107,12 +107,48 @@ int main() {
   checkGLError();
 
   // uploads vertex data to GPU buffers (VBOs)
-  std::array<GLfloat, 28> vertices = {
-      -0.5f, 0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-      0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-      0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-      -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f
-  };
+  std::array<GLfloat, 288> vertices = {
+     -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+
+    -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+
+    -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+
+     0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+
+    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+
+    -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  };
   GLuint vbo;
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -156,36 +192,28 @@ int main() {
   // sets up position attribute for the shader program
   GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
   glEnableVertexAttribArray(posAttrib);
-  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat),
+  glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
                         0);
   checkGLError();
 
   // sets color uniform
   GLint color = glGetAttribLocation(shaderProgram, "color");
   glEnableVertexAttribArray(color);
-  glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat),
-                        (void*)(2 * sizeof(GLfloat)));
+  glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                        (void*)(3 * sizeof(GLfloat)));
   checkGLError();
 
   // sets color uniform
   GLint texCoord = glGetAttribLocation(shaderProgram, "texCoord");
   glEnableVertexAttribArray(texCoord);
-  glVertexAttribPointer(texCoord, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(GLfloat),
-                        (void*)(5 * sizeof(GLfloat)));
+  glVertexAttribPointer(texCoord, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                        (void*)(6 * sizeof(GLfloat)));
   checkGLError();
 
   // finds time uniform
   GLint timeSinceStart = glGetUniformLocation(shaderProgram, "timeSinceStart");
   glUniform1f(timeSinceStart, 0.f);
   checkGLError();
-
-  // create ebo
-  std::array<GLuint, 6> indices = {0, 1, 2, 2, 3, 0};
-  GLuint ebo;
-  glGenBuffers(1, &ebo);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint),
-               indices.data(), GL_STATIC_DRAW);
 
   GLuint helloTex = createTextureFromFile(GL_TEXTURE0, "files/hello.png");
   GLuint baconTex = createTextureFromFile(GL_TEXTURE1, "files/bacon.png");
@@ -207,6 +235,9 @@ int main() {
       glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 1.0f, 10.f);
   glUniformMatrix4fv(proj, 1, GL_FALSE, glm::value_ptr(projMat));
 
+  // enable depth test
+  glEnable(GL_DEPTH_TEST);
+
   using std::chrono::high_resolution_clock;
   using std::chrono::duration_cast;
   using std::chrono::duration;
@@ -226,7 +257,7 @@ int main() {
   while (!glfwWindowShouldClose(window)) {
     // sets OpenGL clear color
     glClearColor(0.f, 0.f, 0.f, 1.f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // updates time uniform attribute
     const auto totalTime = high_resolution_clock::now() - start;
@@ -242,7 +273,7 @@ int main() {
     glm::mat4 transMat;
 
     // animates the x and y scale of the object
-    const float scale = (glm::sin(time * glm::radians(180.0f)) + 4.0f) / 3.0f;
+    const float scale = (glm::sin(time * glm::radians(180.0f)) + 4.0f) / 3.5;
     transMat = glm::scale(glm::mat4(), glm::vec3(scale, scale, 1.0f));
 
     // constantly rotates the object on the Z axis
@@ -256,7 +287,7 @@ int main() {
     // uploads model matrix to our uniform attribute
     glUniformMatrix4fv(model, 1, GL_FALSE, glm::value_ptr(transMat));
 
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
     checkGLError();
 
     glfwSwapBuffers(window);
