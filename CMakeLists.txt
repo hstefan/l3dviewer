@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.5)
 
 project(l3dviewer)
 
+# enable compilation database generation
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Setup glad dependency
 set(GLAD_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/glad/include")
 set(GLAD_SOURCES "${CMAKE_SOURCE_DIR}/external/glad/src/glad.c")
