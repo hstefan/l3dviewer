@@ -230,7 +230,7 @@ int main() {
 
   GLint viewUni = glGetUniformLocation(shaderProgram, "view");
   glm::mat4 view =
-      glm::lookAt(glm::vec3(1.2f, 1.2f, 1.2f), glm::vec3(0.0f, 0.0f, 0.0f),
+      glm::lookAt(glm::vec3(1.2f, 2.2f, 1.4f), glm::vec3(0.0f, 0.0f, 0.0f),
                   glm::vec3(0.0f, 0.0f, 1.0f));
   glUniformMatrix4fv(viewUni, 1, GL_FALSE, glm::value_ptr(view));
 
@@ -260,7 +260,7 @@ int main() {
   // runs application loop
   while (!glfwWindowShouldClose(window)) {
     // sets OpenGL clear color
-    glClearColor(0.f, 0.f, 0.f, 1.f);
+    glClearColor(0.2f, 0.2f, 0.2f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // updates time uniform attribute
