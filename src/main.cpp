@@ -1,16 +1,16 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <stb/stb_image.h>
 #include <array>
 #include <chrono>
 #include <cstdio>
 #include <fstream>
-#include <streambuf>
-#include <string>
-#include <stb/stb_image.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/vec3.hpp>
+#include <streambuf>
+#include <string>
 
 static bool compileShader(GLuint shader) {
   GLint status;
@@ -48,7 +48,8 @@ GLuint createTextureFromFile(GLenum texture, const char* filename) {
   glBindTexture(GL_TEXTURE_2D, tex);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                  GL_LINEAR_MIPMAP_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
   int w;
@@ -79,7 +80,8 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
   // create glfw window
-  GLFWwindow* window = glfwCreateWindow(1280, 720, "L3Viewer", nullptr, nullptr);
+  GLFWwindow* window =
+      glfwCreateWindow(1280, 720, "L3Viewer", nullptr, nullptr);
   if (!window) {
     fprintf(stderr, "Failed to create window.");
     glfwTerminate();
@@ -106,6 +108,7 @@ int main() {
   glBindVertexArray(vao);
   checkGLError();
 
+  // clang-format off
   // uploads vertex data to GPU buffers (VBOs)
   std::array<GLfloat, 288> vertices = {
      -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
@@ -149,6 +152,8 @@ int main() {
      0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
     -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
     -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  };
+  // clang-format on
+
   GLuint vbo;
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -197,22 +202,22 @@ int main() {
   checkGLError();
 
   // sets color uniform
-  GLint color = glGetAttribLocation(shaderProgram, "color");
-  glEnableVertexAttribArray(color);
-  glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+  GLint colorAttrib = glGetAttribLocation(shaderProgram, "color");
+  glEnableVertexAttribArray(colorAttrib);
+  glVertexAttribPointer(colorAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
                         (void*)(3 * sizeof(GLfloat)));
   checkGLError();
 
   // sets color uniform
-  GLint texCoord = glGetAttribLocation(shaderProgram, "texCoord");
-  glEnableVertexAttribArray(texCoord);
-  glVertexAttribPointer(texCoord, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
-                        (void*)(6 * sizeof(GLfloat)));
+  GLint texCoordAttrib = glGetAttribLocation(shaderProgram, "texCoord");
+  glEnableVertexAttribArray(texCoordAttrib);
+  glVertexAttribPointer(texCoordAttrib, 2, GL_FLOAT, GL_FALSE,
+                        8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
   checkGLError();
 
   // finds time uniform
-  GLint timeSinceStart = glGetUniformLocation(shaderProgram, "timeSinceStart");
-  glUniform1f(timeSinceStart, 0.f);
+  GLint timeAttrib = glGetUniformLocation(shaderProgram, "timeSinceStart");
+  glUniform1f(timeAttrib, 0.f);
   checkGLError();
 
   GLuint helloTex = createTextureFromFile(GL_TEXTURE0, "files/hello.png");
@@ -221,19 +226,18 @@ int main() {
   glUniform1i(glGetUniformLocation(shaderProgram, "texPepper"), 0);
   glUniform1i(glGetUniformLocation(shaderProgram, "texBacon"), 1);
 
-  GLint model = glGetUniformLocation(shaderProgram, "model");
+  GLint modelUni = glGetUniformLocation(shaderProgram, "model");
 
-  GLint view = glGetUniformLocation(shaderProgram, "view");
-  glm::mat4 viewMat = glm::lookAt(
-      glm::vec3(1.2f, 1.2f, 1.2f),
-      glm::vec3(0.0f, 0.0f, 0.0f),
-      glm::vec3(0.0f, 0.0f, 1.0f));
-  glUniformMatrix4fv(view, 1, GL_FALSE, glm::value_ptr(viewMat));
+  GLint viewUni = glGetUniformLocation(shaderProgram, "view");
+  glm::mat4 view =
+      glm::lookAt(glm::vec3(1.2f, 1.2f, 1.2f), glm::vec3(0.0f, 0.0f, 0.0f),
+                  glm::vec3(0.0f, 0.0f, 1.0f));
+  glUniformMatrix4fv(viewUni, 1, GL_FALSE, glm::value_ptr(view));
 
-  GLint proj = glGetUniformLocation(shaderProgram, "proj");
-  glm::mat4 projMat =
+  GLint projUni = glGetUniformLocation(shaderProgram, "proj");
+  glm::mat4 proj =
       glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 1.0f, 10.f);
-  glUniformMatrix4fv(proj, 1, GL_FALSE, glm::value_ptr(projMat));
+  glUniformMatrix4fv(projUni, 1, GL_FALSE, glm::value_ptr(proj));
 
   // enable depth test
   glEnable(GL_DEPTH_TEST);
@@ -262,7 +266,7 @@ int main() {
     // updates time uniform attribute
     const auto totalTime = high_resolution_clock::now() - start;
     const float time = duration_cast<duration<float>>(totalTime).count();
-    glUniform1f(timeSinceStart, time);
+    glUniform1f(timeAttrib, time);
 
     // updates deltaTime
     const auto frameDuration = high_resolution_clock::now() - lastFrameTime;
@@ -270,22 +274,21 @@ int main() {
     lastFrameTime = high_resolution_clock::now();
 
     // sets up transformation matix
-    glm::mat4 transMat;
+    glm::mat4 model;
 
     // animates the x and y scale of the object
     const float scale = (glm::sin(time * glm::radians(180.0f)) + 4.0f) / 3.5;
-    transMat = glm::scale(glm::mat4(), glm::vec3(scale, scale, 1.0f));
+    model = glm::scale(glm::mat4(), glm::vec3(scale, scale, 1.0f));
 
     // constantly rotates the object on the Z axis
-    transMat = glm::rotate(transMat, time * glm::radians(45.0f),
-                           glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::rotate(model, time * glm::radians(45.0f),
+                        glm::vec3(0.0f, 0.0f, 1.0f));
 
     // smoothly rotates the object on the X axis based on user's input
-    transMat = glm::rotate(transMat, glm::radians(xAng),
-        glm::vec3(1.0f, 0.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(xAng), glm::vec3(1.0f, 0.0f, 0.0f));
 
     // uploads model matrix to our uniform attribute
-    glUniformMatrix4fv(model, 1, GL_FALSE, glm::value_ptr(transMat));
+    glUniformMatrix4fv(modelUni, 1, GL_FALSE, glm::value_ptr(model));
 
     glDrawArrays(GL_TRIANGLES, 0, vertices.size());
     checkGLError();
