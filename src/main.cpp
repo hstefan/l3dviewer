@@ -276,10 +276,6 @@ int main() {
     // sets up transformation matix
     glm::mat4 model;
 
-    // animates the x and y scale of the object
-    const float scale = (glm::sin(time * glm::radians(180.0f)) + 4.0f) / 3.5;
-    model = glm::scale(glm::mat4(), glm::vec3(scale, scale, 1.0f));
-
     // constantly rotates the object on the Z axis
     model = glm::rotate(model, time * glm::radians(45.0f),
                         glm::vec3(0.0f, 0.0f, 1.0f));
