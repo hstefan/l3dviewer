@@ -8,6 +8,7 @@ out vec4 outColor;
 uniform float timeSinceStart;
 uniform sampler2D texPepper;
 uniform sampler2D texBacon;
+uniform vec3 overrideColor;
 
 void main() {
   float t = (sin(timeSinceStart * 4.0) + 1.0) * 0.5;
@@ -24,6 +25,5 @@ void main() {
   vec4 mixedColor = mix(colorPepper, colorBacon, t);
 
   // applies tinted color to output color
-  vec4 tintedColor = mixedColor * FragColor;
-  outColor = mix(mixedColor, tintedColor, 0.6);
+  outColor = mixedColor * FragColor * vec4(overrideColor, 1.0);
 };

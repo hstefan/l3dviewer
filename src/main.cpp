@@ -110,7 +110,7 @@ int main() {
 
   // clang-format off
   // uploads vertex data to GPU buffers (VBOs)
-  std::array<GLfloat, 288> vertices = {
+  std::array<GLfloat, 336> vertices = {
      -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
      0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
      0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
@@ -151,7 +151,16 @@ int main() {
      0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
      0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
     -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  };
+    -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+
+    // vertices for reflective plane
+    -1.0f, -1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+     1.0f, -1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+     1.0f,  1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+     1.0f,  1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+    -1.0f,  1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+    -1.0f, -1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f
+  };
   // clang-format on
 
   GLuint vbo;
@@ -239,6 +248,8 @@ int main() {
       glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 1.0f, 10.f);
   glUniformMatrix4fv(projUni, 1, GL_FALSE, glm::value_ptr(proj));
 
+  GLint colorUni = glGetUniformLocation(shaderProgram, "overrideColor");
+
   // enable depth test
   glEnable(GL_DEPTH_TEST);
 
@@ -286,8 +297,37 @@ int main() {
     // uploads model matrix to our uniform attribute
     glUniformMatrix4fv(modelUni, 1, GL_FALSE, glm::value_ptr(model));
 
-    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+    // reset color override
+    glUniform3f(colorUni, 1.0f, 1.0f, 1.0f);
+    // draw cube
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // enables stencil test to implement planar reflections
+    glEnable(GL_STENCIL_TEST);
+
+    // draw plane
+    glStencilFunc(GL_ALWAYS, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    glStencilMask(0xFF);
+    glDepthMask(GL_FALSE);
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    glDrawArrays(GL_TRIANGLES, 36, 6);
+
+    // draw cube reflection
+    glStencilFunc(GL_EQUAL, 1, 0xFF);
+    glStencilMask(0x00);
+    glDepthMask(GL_TRUE);
+
+    model = glm::scale(glm::translate(model, glm::vec3(0, 0, -1)),
+                       glm::vec3(1, 1, -1));
+    glUniformMatrix4fv(modelUni, 1, GL_FALSE, glm::value_ptr(model));
+    glUniform3f(colorUni, 0.3f, 0.3f, 0.3f);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
     checkGLError();
+
+    glDisable(GL_STENCIL_TEST);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
