@@ -171,7 +171,7 @@ int main() {
   checkGLError();
 
   // creates the vertex shader
-  const std::string vertexSource = getFileContents("files/vertex.glsl");
+  const std::string vertexSource = getFileContents("files/cube.vert");
   const GLchar* vertexSrc = vertexSource.c_str();
   GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(vertexShader, 1, &vertexSrc, nullptr);
@@ -179,7 +179,7 @@ int main() {
   checkGLError();
 
   // creates the fragment shader
-  const std::string fragSource = getFileContents("files/frag.glsl");
+  const std::string fragSource = getFileContents("files/cube.frag");
   const GLchar* fragSrc = fragSource.c_str();
   GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
   glShaderSource(fragShader, 1, &fragSrc, nullptr);
