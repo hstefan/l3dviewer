@@ -80,8 +80,10 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
   // create glfw window
+  const int winWidth = 1280;
+  const int winHeight = 720;
   GLFWwindow* window =
-      glfwCreateWindow(1280, 720, "L3Viewer", nullptr, nullptr);
+      glfwCreateWindow(winWidth, winHeight, "L3Viewer", nullptr, nullptr);
   if (!window) {
     fprintf(stderr, "Failed to create window.");
     glfwTerminate();
@@ -244,8 +246,9 @@ int main() {
   glUniformMatrix4fv(viewUni, 1, GL_FALSE, glm::value_ptr(view));
 
   GLint projUni = glGetUniformLocation(shaderProgram, "proj");
+  const float aspectRatio = static_cast<float>(winWidth) / static_cast<float>(winHeight);
   glm::mat4 proj =
-      glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 1.0f, 10.f);
+      glm::perspective(glm::radians(45.0f), aspectRatio, 1.0f, 10.f);
   glUniformMatrix4fv(projUni, 1, GL_FALSE, glm::value_ptr(proj));
 
   GLint colorUni = glGetUniformLocation(shaderProgram, "overrideColor");
