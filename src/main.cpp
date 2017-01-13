@@ -11,6 +11,7 @@
 #include <glm/vec3.hpp>
 #include <streambuf>
 #include <string>
+#include "gl/Window.hpp"
 
 static bool compileShader(GLuint shader) {
   GLint status;
@@ -66,42 +67,11 @@ GLuint createTextureFromFile(GLenum texture, const char* filename) {
 }
 
 int main() {
-  // initializes glfw
-  int glfwInitRc = glfwInit();
-  if (!glfwInitRc) {
-    fprintf(stderr, "Failed to init GLFW.");
-    return -1;
-  }
-
-  // sets up OpenGL-specific window hints
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
   // create glfw window
   const int winWidth = 1280;
   const int winHeight = 720;
-  GLFWwindow* window =
-      glfwCreateWindow(winWidth, winHeight, "L3Viewer", nullptr, nullptr);
-  if (!window) {
-    fprintf(stderr, "Failed to create window.");
-    glfwTerminate();
-    return -1;
-  }
-
-  // sets up window as our OpenGL context
-  glfwMakeContextCurrent(window);
-
-  // configures glad to load using glfw utility
-  int gladLoadRc = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-  if (!gladLoadRc) {
-    fprintf(stderr, "Failed to load OpenGL with glad: error code %d\n",
-            gladLoadRc);
-    return -1;
-  }
-
-  printf("OpenGL version: %d.%d\n", GLVersion.major, GLVersion.minor);
+  const l3d::gl::ContextProperties ctx{4, 5, true, true};
+  l3d::gl::Window window("L3Dviewer", winWidth, winHeight, ctx);
 
   // generates VAO to avoid having to reconfigure attributes every time we
   // switch the active shader program
@@ -272,7 +242,7 @@ int main() {
   float deltaTime = 0.0f;
 
   // runs application loop
-  while (!glfwWindowShouldClose(window)) {
+  while (window.IsOpen()) {
     // sets OpenGL clear color
     glClearColor(0.2f, 0.2f, 0.2f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -332,11 +302,11 @@ int main() {
 
     glDisable(GL_STENCIL_TEST);
 
-    glfwSwapBuffers(window);
-    glfwPollEvents();
+    window.SwapBuffers();
 
+    window.PollEvents();
     // controls angular speed for the object x rotation
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    if (window.IsKeyPressed(GLFW_KEY_SPACE))
       xAngSpeed += xAngAccel * deltaTime;
     else
       xAngSpeed -= xAngAccel * deltaTime;
@@ -344,8 +314,8 @@ int main() {
     xAngSpeed = glm::clamp(xAngSpeed, 0.0f, xMaxAngSpeed);
     xAng += xAngSpeed * deltaTime;
 
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-      glfwSetWindowShouldClose(window, GL_TRUE);
+    if (window.IsKeyPressed(GLFW_KEY_ESCAPE))
+      window.Close();
   }
 
   // cleans up shaders

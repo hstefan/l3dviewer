@@ -37,6 +37,8 @@ add_subdirectory(external/glm)
 
 # l3dviewer target
 add_executable(l3dviewer
+  src/gl/Window.hpp
+  src/gl/Window.cpp
   src/main.cpp)
 
 set_property(TARGET l3dviewer PROPERTY CXX_STANDARD 14)
