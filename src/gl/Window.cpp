@@ -4,6 +4,7 @@
 #include <cstdio>
 
 using l3d::gl::Window;
+using l3d::gl::ContextProperties;
 
 Window::Window(const char* title, int width, int height,
                ContextProperties contextProp)
