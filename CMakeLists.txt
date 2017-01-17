@@ -40,6 +40,7 @@ add_executable(l3dviewer
   src/gl/Window.hpp
   src/gl/Window.cpp
   src/gl/VertexArray.hpp
+  src/gl/VertexBuffer.hpp
   src/main.cpp)
 
 set_property(TARGET l3dviewer PROPERTY CXX_STANDARD 14)

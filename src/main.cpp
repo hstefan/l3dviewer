@@ -13,6 +13,7 @@
 #include <string>
 #include "gl/Window.hpp"
 #include "gl/VertexArray.hpp"
+#include "gl/VertexBuffer.hpp"
 
 static bool compileShader(GLuint shader) {
   GLint status;
@@ -135,11 +136,9 @@ int main() {
   };
   // clang-format on
 
-  GLuint vbo;
-  glGenBuffers(1, &vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat),
-               vertices.data(), GL_STATIC_DRAW);
+  l3d::gl::VertexBuffer vbo;
+  vbo.Bind();
+  vbo.Data(vertices);
   checkGLError();
 
   // creates the vertex shader
@@ -323,9 +322,6 @@ int main() {
   glDeleteProgram(shaderProgram);
   glDeleteShader(fragShader);
   glDeleteShader(vertexShader);
-
-  // clean up vbo
-  glDeleteBuffers(1, &vbo);
 
   return 0;
 }
