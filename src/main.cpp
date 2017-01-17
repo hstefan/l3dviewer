@@ -20,7 +20,8 @@ static bool compileShader(GLuint shader) {
   // if status == GL_FALSE, the compile failed
   if (status != GL_TRUE) {
     std::array<char, 512> buffer;
-    glGetShaderInfoLog(shader, buffer.size(), nullptr, buffer.data());
+    glGetShaderInfoLog(shader, static_cast<GLsizei>(buffer.size()), nullptr,
+                       buffer.data());
     printf("Error compiling shader.\n%s", buffer.data());
   }
   return status == GL_TRUE;
@@ -168,7 +169,8 @@ int main() {
   glGetProgramiv(shaderProgram, GL_LINK_STATUS, &programStatus);
   if (programStatus != GL_TRUE) {
     std::array<char, 512> buffer;
-    glGetProgramInfoLog(shaderProgram, buffer.size(), nullptr, buffer.data());
+    glGetProgramInfoLog(shaderProgram, static_cast<GLsizei>(buffer.size()),
+                        nullptr, buffer.data());
     printf("Failed to link shader program.\n%s", buffer.data());
   }
 
