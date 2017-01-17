@@ -12,6 +12,7 @@
 #include <streambuf>
 #include <string>
 #include "gl/Window.hpp"
+#include "gl/VertexArray.hpp"
 
 static bool compileShader(GLuint shader) {
   GLint status;
@@ -76,10 +77,8 @@ int main() {
 
   // generates VAO to avoid having to reconfigure attributes every time we
   // switch the active shader program
-  GLuint vao;
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
-  checkGLError();
+  l3d::gl::VertexArray vao;
+  vao.Bind();
 
   // clang-format off
   // uploads vertex data to GPU buffers (VBOs)
@@ -327,9 +326,6 @@ int main() {
 
   // clean up vbo
   glDeleteBuffers(1, &vbo);
-
-  // clean up vao
-  glDeleteVertexArrays(1, &vao);
 
   return 0;
 }
