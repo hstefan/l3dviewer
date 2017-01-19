@@ -11,6 +11,7 @@ class VertexArray {
   inline VertexArray();
   inline ~VertexArray();
   inline void Bind();
+  inline GLuint GetHandle() const;
 
  private:
   GLuint vao;
@@ -30,6 +31,8 @@ void VertexArray::Bind() {
   assert(vao != 0 && "Attempt to bind empty vertex array.");
   glBindVertexArray(vao);
 }
+
+GLuint VertexArray::GetHandle() const { return vao; }
 
 }  // namespace gl
 }  // namespace l3d
