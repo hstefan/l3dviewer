@@ -1,4 +1,5 @@
 ﻿#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <stb/stb_image.h>
 #include <array>
 #include <chrono>
@@ -10,12 +11,12 @@
 #include <glm/vec3.hpp>
 #include <streambuf>
 #include <string>
+#include "gl/Debug.hpp"
 #include "gl/Shader.hpp"
 #include "gl/ShaderProgram.hpp"
 #include "gl/VertexArray.hpp"
 #include "gl/VertexBuffer.hpp"
 #include "gl/Window.hpp"
-#include <GLFW/glfw3.h>
 
 static bool compileShader(GLuint shader) {
   GLint status;
@@ -29,11 +30,6 @@ static bool compileShader(GLuint shader) {
     printf("Error compiling shader.\n%s", buffer.data());
   }
   return status == GL_TRUE;
-}
-
-static void checkGLError() {
-  GLuint error = glGetError();
-  if (error != 0) printf("glGetError returned %d!\n", error);
 }
 
 GLuint createTextureFromFile(GLenum texture, const char* filename) {
@@ -55,7 +51,7 @@ GLuint createTextureFromFile(GLenum texture, const char* filename) {
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE,
                texBytes);
   glGenerateMipmap(GL_TEXTURE_2D);
-  checkGLError();
+  l3d::gl::CheckErrors();
   stbi_image_free(texBytes);
   return tex;
 }
@@ -130,19 +126,19 @@ int main() {
   l3d::gl::VertexBuffer vbo;
   vbo.Bind();
   vbo.Data(vertices);
-  checkGLError();
+  l3d::gl::CheckErrors();
 
   // creates the vertex shader
   l3d::gl::Shader vertexShader(GL_VERTEX_SHADER);
   vertexShader.SourceFromFile("files/cube.vert");
   vertexShader.Compile();
-  checkGLError();
+  l3d::gl::CheckErrors();
 
   // creates the fragment shader
   l3d::gl::Shader fragShader(GL_FRAGMENT_SHADER);
   fragShader.SourceFromFile("files/cube.frag");
   fragShader.Compile();
-  checkGLError();
+  l3d::gl::CheckErrors();
 
   // create a shader program with both shaders from above
   l3d::gl::ShaderProgram prog;
@@ -151,26 +147,24 @@ int main() {
   prog.BindFragmentLocation("outColor", 0);
   prog.Link();
   prog.Use();
-  checkGLError();
+  l3d::gl::CheckErrors();
 
   // sets up position attribute for the shader program
-  prog.VertexAttribPointerf(vao, "position", 0, 3, false,
-                                     8);
-  checkGLError();
+  prog.VertexAttribPointerf(vao, "position", 0, 3, false, 8);
+  l3d::gl::CheckErrors();
 
   // sets color uniform
   prog.VertexAttribPointerf(vao, "color", 3, 3, false, 8);
-  checkGLError();
+  l3d::gl::CheckErrors();
 
   // sets color uniform
-  prog.VertexAttribPointerf(vao, "texCoord", 6, 2, false,
-                                     8);
-  checkGLError();
+  prog.VertexAttribPointerf(vao, "texCoord", 6, 2, false, 8);
+  l3d::gl::CheckErrors();
 
   // finds time uniform
   const GLint timeLoc = prog.GetUniformLocation("timeSinceStart");
   prog.SetUniform(timeLoc, 0.f);
-  checkGLError();
+  l3d::gl::CheckErrors();
 
   GLuint helloTex = createTextureFromFile(GL_TEXTURE0, "files/hello.png");
   GLuint baconTex = createTextureFromFile(GL_TEXTURE1, "files/bacon.png");
@@ -273,7 +267,7 @@ int main() {
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    checkGLError();
+    l3d::gl::CheckErrors();
 
     glDisable(GL_STENCIL_TEST);
 
