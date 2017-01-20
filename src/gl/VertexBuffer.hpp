@@ -12,6 +12,7 @@ class VertexBuffer {
   inline void Bind();
   template <class T>
   inline void Data(const T& buffer);
+  inline operator GLuint() const;
 
  private:
   GLuint vbo;
@@ -39,5 +40,7 @@ void VertexBuffer::Data(const T& buffer) {
                buffer.data(), GL_STATIC_DRAW);
 }
 
-} // namespace gl
-} // namespace l3d
+VertexBuffer::operator GLuint() const { return vbo; }
+
+}  // namespace gl
+}  // namespace l3d

@@ -154,16 +154,16 @@ int main() {
   checkGLError();
 
   // sets up position attribute for the shader program
-  prog.VertexAttribPointerf(vao.GetHandle(), "position", 0, 3, false,
+  prog.VertexAttribPointerf(vao, "position", 0, 3, false,
                                      8);
   checkGLError();
 
   // sets color uniform
-  prog.VertexAttribPointerf(vao.GetHandle(), "color", 3, 3, false, 8);
+  prog.VertexAttribPointerf(vao, "color", 3, 3, false, 8);
   checkGLError();
 
   // sets color uniform
-  prog.VertexAttribPointerf(vao.GetHandle(), "texCoord", 6, 2, false,
+  prog.VertexAttribPointerf(vao, "texCoord", 6, 2, false,
                                      8);
   checkGLError();
 

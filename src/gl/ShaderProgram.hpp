@@ -14,16 +14,12 @@ class ShaderProgram {
  public:
   inline ShaderProgram();
   inline ~ShaderProgram();
-  inline void Attach(const Shader& shader);
   inline void Attach(GLuint shader);
   inline void BindFragmentLocation(const char* attr, int color);
   inline bool Link();
   inline void Use();
   inline void VertexAttribPointerf(GLuint vao, const char* attr, int index,
                                    GLint size, bool normalized,
-                                   GLsizei groupSize);
-  inline void VertexAttribPointerf(const VertexArray& vao, const char* attr,
-                                   int index, GLint size, bool normalized,
                                    GLsizei groupSize);
   template <class T>
   inline void SetUniform(const char* name, const T& value);
@@ -32,6 +28,7 @@ class ShaderProgram {
   inline void SetUniform(GLint loc, const glm::mat4& value);
   inline void SetUniform(GLint loc, const glm::vec3& value);
   inline GLint GetUniformLocation(const char* name);
+  inline operator GLuint() const;
 
  private:
   GLuint prog;
@@ -46,8 +43,6 @@ ShaderProgram::~ShaderProgram() {
   assert(prog != 0 && "Attempt to destroy invalid shader program!");
   glDeleteProgram(prog);
 }
-
-void ShaderProgram::Attach(const Shader& shader) { Attach(shader.GetHandle()); }
 
 void ShaderProgram::Attach(GLuint shader) {
   assert(prog != 0 && "Attempt to attach shader to an invalid program!");
@@ -89,14 +84,6 @@ void ShaderProgram::VertexAttribPointerf(GLuint vao, const char* attr,
                         (void*)(index * sizeof(GLfloat)));
 }
 
-void ShaderProgram::VertexAttribPointerf(const VertexArray& vao,
-                                         const char* attr, int index,
-                                         GLint size, bool normalized,
-                                         GLsizei groupSize) {
-  VertexAttribPointerf(vao.GetHandle(), attr, index, size, normalized,
-                       groupSize);
-}
-
 template <class T>
 void ShaderProgram::SetUniform(const char* name, const T& value) {
   SetUniform(GetUniformLocation(name), value);
@@ -132,5 +119,8 @@ GLint ShaderProgram::GetUniformLocation(const char* name) {
   assert(loc >= 0 && "Unable to find uniform location!");
   return loc;
 }
+
+ShaderProgram::operator GLuint() const { return prog; }
+
 }  // namespace gl
 }  // namespace l3d

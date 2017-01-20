@@ -16,7 +16,7 @@ class Shader {
   inline void Source(std::istream& src);
   inline void SourceFromFile(std::string path);
   inline bool Compile();
-  inline GLuint GetHandle() const;
+  inline operator GLuint() const;
 
  private:
   GLuint shader;
@@ -62,7 +62,7 @@ bool Shader::Compile() {
   return status == GL_TRUE;
 }
 
-GLuint Shader::GetHandle() const { return shader; }
+Shader::operator GLuint() const { return shader; }
 
 }  // namespace gl
 }  // namespace l3d
