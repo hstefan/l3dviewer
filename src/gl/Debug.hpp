@@ -9,7 +9,7 @@ namespace gl {
 inline unsigned CheckErrors() {
   GLuint error;
   unsigned numError = 0;
-  while (error = glGetError()) {
+  while ((error = glGetError())) {
     ++numError;
     std::cout << "glGetError returned " << error << '\n';
   }

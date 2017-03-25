@@ -36,7 +36,7 @@ void VertexBuffer::Bind() {
 template <class T>
 void VertexBuffer::Data(const T& buffer) {
   Bind();
-  glBufferData(GL_ARRAY_BUFFER, buffer.size() * sizeof(T::value_type),
+  glBufferData(GL_ARRAY_BUFFER, buffer.size() * sizeof(typename T::value_type),
                buffer.data(), GL_STATIC_DRAW);
 }
 
