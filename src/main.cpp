@@ -18,20 +18,6 @@
 #include "gl/VertexBuffer.hpp"
 #include "gl/Window.hpp"
 
-static bool compileShader(GLuint shader) {
-  GLint status;
-  glCompileShader(shader);
-  glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-  // if status == GL_FALSE, the compile failed
-  if (status != GL_TRUE) {
-    std::array<char, 512> buffer;
-    glGetShaderInfoLog(shader, static_cast<GLsizei>(buffer.size()), nullptr,
-                       buffer.data());
-    printf("Error compiling shader.\n%s", buffer.data());
-  }
-  return status == GL_TRUE;
-}
-
 GLuint createTextureFromFile(GLenum texture, const char* filename) {
   GLuint tex;
   glGenTextures(1, &tex);
