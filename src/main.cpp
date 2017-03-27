@@ -12,6 +12,7 @@
 #include <streambuf>
 #include <string>
 #include "gl/Debug.hpp"
+#include "gl/Image.hpp"
 #include "gl/Shader.hpp"
 #include "gl/ShaderProgram.hpp"
 #include "gl/VertexArray.hpp"
@@ -28,17 +29,11 @@ GLuint createTextureFromFile(GLenum texture, const char* filename) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                   GL_LINEAR_MIPMAP_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-  int w;
-  int h;
-  int c;
-  unsigned char* texBytes = stbi_load(filename, &w, &h, &c, STBI_rgb);
-
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE,
-               texBytes);
+  l3d::gl::Image image(filename, STBI_rgb);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.Width(), image.Height(), 0,
+               GL_RGB, GL_UNSIGNED_BYTE, image.BytesCopy().data());
   glGenerateMipmap(GL_TEXTURE_2D);
   l3d::gl::CheckErrors();
-  stbi_image_free(texBytes);
   return tex;
 }
 
